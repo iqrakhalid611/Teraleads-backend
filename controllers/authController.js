@@ -12,7 +12,11 @@ async function register(req, res) {
     if (err.code === 'EMAIL_EXISTS') {
       return res.status(409).json({ error: 'Email already registered' });
     }
-    return res.status(500).json({ error: 'Registration failed' });
+    console.error('Registration error:', err.message || err);
+    return res.status(500).json({
+      error: 'Registration failed',
+      ...(process.env.NODE_ENV !== 'production' && { detail: err.message }),
+    });
   }
 }
 
