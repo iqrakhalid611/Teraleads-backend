@@ -18,4 +18,4 @@ const pool = new Pool({
   connectionString: getConnectionString(),
 });
 
-module.exports = { pool };
+module.exports = { pool, getConnectionString };

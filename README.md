@@ -19,20 +19,20 @@ Express.js + PostgreSQL API for the AI-powered patient assistant dashboard (auth
 
 2. **PostgreSQL**
 
-   Create a database (e.g. `dental_dashboard`) and run migrations in order:
+   Create a database (e.g. `dental_dashboard` or use Neon/Vercel Postgres), then run migrations:
+
+   **Option A – npm script (uses `DATABASE_URL` from `.env`):**
+
+   ```bash
+   npm run migrate
+   ```
+
+   **Option B – psql:**
 
    ```bash
    psql "postgresql://USER:PASSWORD@HOST:PORT/DATABASE" -f db/001_create_users_table.sql
    psql "postgresql://USER:PASSWORD@HOST:PORT/DATABASE" -f db/002_create_patients_table.sql
    psql "postgresql://USER:PASSWORD@HOST:PORT/DATABASE" -f db/003_create_chat_messages_table.sql
-   ```
-
-   Example (local):
-
-   ```bash
-   psql "postgresql://localhost:5432/dental_dashboard" -f db/001_create_users_table.sql
-   psql "postgresql://localhost:5432/dental_dashboard" -f db/002_create_patients_table.sql
-   psql "postgresql://localhost:5432/dental_dashboard" -f db/003_create_chat_messages_table.sql
    ```
 
 3. **Environment**
@@ -51,6 +51,11 @@ npm start
 ```
 
 Server listens on `http://localhost:4000` (or `PORT` from env).
+
+## Live deployment
+
+- **Backend:** _(add your live API URL, e.g. Vercel or Render)_  
+  Example: `https://your-backend.vercel.app`
 
 ## Environment variables
 
@@ -96,6 +101,13 @@ Chat uses one of (in order): **external AI service** → **OpenAI** → **mock**
 
 On AI failure, the backend still saves the user message and a fallback assistant message and returns `aiError: true` in the response.
 
+## Architecture overview
+
+- **Express** HTTP server; routes under `/auth`, `/patients`, `/chat`, `/health`.
+- **PostgreSQL** via `pg`; connection from `DATABASE_URL` (pool in `config/db.js`).
+- **JWT** in `Authorization: Bearer <token>` for protected routes; middleware in `middleware/auth.js`.
+- **Layers:** routes → controllers → services → models; SQL migrations in `db/`.
+
 ## Project structure
 
 ```
@@ -107,6 +119,11 @@ backend/
 ├── models/
 ├── routes/
 ├── services/
+├── scripts/    # migrate.js
 ├── index.js
 └── .env.example
 ```
+
+## AI usage disclosure
+
+AI was used to create the basic project structure (Express app, folder layout, Prettier/ESLint setup) and for a few other minor setup and documentation tasks.
